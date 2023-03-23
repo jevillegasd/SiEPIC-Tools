@@ -158,7 +158,6 @@ The `core.py` contains definitions to the layout classes that enable Netlist con
 		*  *TECHNOLOGY:*
 		*  *Dcenter:*
  
- 
   	* ##### Method: `display()`
 		The `display` method 
 
@@ -169,8 +168,17 @@ The `core.py` contains definitions to the layout classes that enable Netlist con
 		The `has_model` method
 
  	* ##### Method: `get_polygons()`
-		The `get_polygons` method   
-
+		The `get_polygons` method
+		
+	* ##### Method: `set_SPICE_params(component, arg, verbose)`
+		Setter method for SPICE parameters. Inputs are either a string with SPICE parameters or a dictionnary with all the SPICE parameters to be included in the component. It will also override the parameters written in the cell component.
+		###### **Inputs**
+		*	*component*:  	A SIEPIC.core.component instance.
+		*	*arg*:		A string with the SPICE parameters or a dictionnary where each memeber is a SPICE parameter.
+		*	*verbose*:	Boolean, true to print command outputs.
+ 
+ 	* ##### Method: `get_SPICE_params()`
+		Getter method for SPICE parameters. Returns a dictionnary with the SPICE marameter of the component.
 * #### e. Class `WaveguideGUI`
 * #### f. Class `MonteCarloGUI`
 
@@ -409,3 +417,31 @@ The `extend` module
 * #### b. `geometry`
 * #### c. `layout`
 * #### d. `sampling`
+* #### e. `crossing`
+	Util to insert a crossing cell between intersecting paths as waveguides are instantiated. Works only for path intersecting paths but not with existing waveguide cells nor self intersecting paths.   
+	* ##### Method: `insert_crossing(selected_paths, params, verbose= False)`
+		Method to insert crossings between any number of paths
+		###### **Inputs**
+		* *selected_path*: Array of instances (ObjInstPath) pointing to the selected paths, can be generated from `utils.select_paths(tech,cell)`
+		* *params*: Dictionnary with fields:
+			* `crossing_cell`:	string, name of cell for the waveguide crossing. 
+			* `crossing_library`:	string, name of library (technology) of the wavguide crossing.
+			* `crossing_offset`:	1x2 double array, [x, y] offests of the cell origin with respect to its geometric center. 
+		* *verbose*: Boolean, true to print outputs in the console.
+			 
+		###### **Outputs**
+		* *selected_path*: Array of instances (ObjInstPath) pointing to the updated list of paths after breaking and cutting at the crossing positions.
+
+	* ##### Method: `cross_2paths()` 
+		Method to insert a crossing between two paths.
+		###### **Inputs**
+		* *oip_path1*:  Instance (ObjInstPath) of the first path object.
+		* *oip_path2*:  Instance (ObjInstPath) of the second path object.
+		* *xcell*:  Cell ptr to the crossing cell. 
+		* *origin*:  pya.Trans object with the crossing cell origin transformation.
+		* *verbose*:  boolean, true to print outputs in the console.
+		
+		###### **Outputs**
+		* *new_path1*:  Array size 2 with instances (ObjInstPath) of the two paths resulting from breaking oip_path1.
+		* *new_path2*:  Array size 2 with instances (ObjInstPath) of the two paths resulting from breaking oip_path2.
+		* *flag*:	Boolena, True if a crossing cell is correctly placed.
